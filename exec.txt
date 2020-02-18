@@ -1,0 +1,345 @@
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Scanner;
+
+import Observer.*;
+
+/**
+ * Creates a booking platform which has a main menu that allows the user to either :
+ *  - create a new reservation
+ *  - display an existing reservation
+ *  - edit an existing reservation
+ *  - exit
+ *  
+ * A sub-menu appear in case of a reservation edit allowing the user to :
+ *  - change the initial number of nights of the reservation
+ *  - cancel the reservation
+ *  - exit to main menu
+ * 
+ * @author Tea Laurey
+ * @since 2019-10-26
+ * @version 1.0.0
+ */
+public class Exec {
+	Scanner myObj = new Scanner(System.in);  // Create a Scanner object
+	/**
+	 * List of all the reservations of the platform.
+	 */
+	public ArrayList<Guest> allR = new ArrayList<>();
+	
+	/**
+	 * List of all the properties of the platform.
+	 */
+	private ArrayList<Booking> allBungalows = new ArrayList<Booking>(5);
+	private ArrayList<Booking> allCottages = new ArrayList<Booking>(3);
+	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	
+	/**
+	 * Reservation platform constructor.
+	 * Creates the list of available properties.
+	 * Prompts the main menu to the user and responds accordingly.
+	 */
+	public Exec(){		
+		createProperties();
+		int exit = 0;
+		while(exit == 0) {
+			System.out.println("Main Menu");
+			System.out.println("1 - Create new reservation");
+			System.out.println("2 - View reservation");
+			System.out.println("3 - Edit reservation");
+			System.out.println("4 - Exit");
+			int choice = myObj.nextInt();
+			switch (choice) {
+	        case 1:
+				System.out.println("Type : \n1 - Bungallow \n2 - Cottage");
+				int type = myObj.nextInt();
+				createNewR(type);
+	            break;
+	        case 2:
+	            displayR();
+	            break;
+	        case 3:
+	        	editR();
+	            break;
+	        case 4:
+	        	exit = 1;
+	            break;
+	        default:
+	        	System.out.println("This is not an option. Please enter a valid option.");
+			}
+			
+		}
+		
+	}
+
+	/**
+	 * This function allows the user to create a new reservation according to the type of reservation wanted (Bungallow or Cottage).
+	 * Prompts all available properties of the wanted type and allows user to choose.
+	 * User then enters check in date and number of night desired. Program test the entered dates availability :
+	 *  - if available : ask user for upgrades, take user info, print summary and confirmation number
+	 *  - else : ask user if wants to be added to wait-list, if so, user info taken and added to wanted property's wait-list
+	 * All new reservations are added to a list.
+	 * 
+	 * @param type - integer : type of property wanted (1 for bungallow and 2 for cottage)
+	 */
+	public void createNewR(int type) {
+		Guest newG = new Guest();
+		int name;
+		Booking reserved = null;
+		if(type==1) {
+			display(allBungalows);
+			System.out.println("Which do you want to reserve?");
+			
+			name = myObj.nextInt();
+			
+			reserved = allBungalows.get(name-1);
+			newG.setBooking(reserved);
+		}
+		else if(type==2) {
+			display(allCottages);
+			System.out.println("Which do you want to reserve?");
+			
+			name = myObj.nextInt();
+			
+			reserved = allCottages.get(name-1);
+			newG.setBooking(reserved);
+		}
+		
+		try {
+			System.out.println("Enter check in date as dd/mm/yyyy : ");			
+			String sDate1 = myObj.next(); 
+		    Date checkIn = new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
+		    
+		    System.out.println("Enter number of nights : ");
+		    int nbNights = myObj.nextInt();
+		    newG.setNbNights(nbNights);
+		    
+		    Calendar c = Calendar.getInstance();
+	    	c.setTime(checkIn);
+	    	c.add(Calendar.DATE, nbNights);
+	    	Date nCheckOut = c.getTime();
+	    	
+	    	Date[] newDates = new Date[2];
+	    	newDates[0] = checkIn;
+	    	newDates[1] = nCheckOut;
+	    	newG.setDates(newDates);
+	    	
+
+	    	boolean available = newG.getBooking().isAvailable(newDates);
+	    	
+	    	if(available==true) {
+	    		newG.getBooking().addReservation(newDates);
+	    		newG.setName();
+	    		newG.setAddress();
+	    		newG.setPhone();
+	    		newG.setEmail();
+	    		newG.setCreditCard();
+	    		newG.setUpgrade(type);
+	    		newG.setConfirmNb();
+	    		newG.setDeposit(reserved);
+	    		
+	    		newG.display();
+	    	}
+	    	else {
+	    		System.out.println("Those dates or currently not available to be reserve. Do you want to be added to the waitlist ? (y or n)");
+	    		String response = myObj.next();
+	    		if(response.compareTo("y") == 0) {
+	    			newG.setName();
+	        		newG.setAddress();
+	        		newG.setPhone();
+	        		newG.setEmail();
+	        		newG.setCreditCard();
+	        		reserved.registerObserver(newG);
+	    		}
+	    	}		
+			allR.add(newG);
+		}
+		
+		catch(Exception e) {
+			System.out.println("You did not follow the date format provided.");
+		}
+	}
+	
+	
+	/**
+	 * Takes the reservation number of the reservation to display from user.
+	 * Look for the given reservation number in the list of all reservations.
+	 * Prints error message if reservation number does not exist and go back to main menu.
+	 */
+	public void displayR() {
+		System.out.println("Enter your reservation number : ");
+		int reservationN = myObj.nextInt();
+		boolean exist = false;
+		for (int i = 0; i < allR.size(); i++) {
+			if (allR.get(i).getConfirmNb() == reservationN) {
+				allR.get(i).display();
+				exist = true;
+			}
+		}
+		if(!exist) {
+			System.out.println("This reservation number does not exist.");			
+		}
+	}
+	
+	/**
+	 * Takes the reservation number of the reservation to display from user.
+	 * Look for the given reservation number in the list of all reservations.
+	 *  - if reservation number does not exist : prints error message and go back to main menu.
+	 *  - else : open edit menu
+	 */
+	public void editR() {
+		System.out.println("Enter your reservation number : ");
+		int reservationN = myObj.nextInt();
+		int resN = -1;
+		
+		for (int i = 0; i < allR.size(); i++) {
+			if (allR.get(i).getConfirmNb() == reservationN) {
+				resN = i;
+			}
+		}	
+		
+		if(resN > -1) {
+			editMenu(allR.get(resN));
+		}
+		else {
+			System.out.println("This reservation number does not exist.");
+		}
+	}
+	
+	/**
+	 * Allow the given guest to edit his/her reservation. 
+	 * Prints the user menu and acts accordingly :
+	 *  - 1 : change the number of nights
+	 *  - 2 : cancel and exit to main menu
+	 *  - 3 : exit to main menu
+	 *  
+	 *  @param g - Guest : the guest editing reservation
+	 */
+	public void editMenu(Guest g) {
+		int exit = 0;
+		while(exit == 0) {
+			System.out.println("Edit Reservation Menu");
+			System.out.println("1 - Change number of nights");
+			System.out.println("2 - Cancel");
+			System.out.println("3 - Exit to Main Menu");
+			int choice = myObj.nextInt();
+			switch (choice) {
+	        case 1:
+				changeNbNights(g);
+	            break;
+	        case 2:
+	            cancel(g);
+	            exit = 1;
+	            break;
+	        case 3:
+	        	exit = 1;
+	            break;
+	        default:
+	        	System.out.println("This is not an option. Please enter a valid option.");
+				choice = myObj.nextInt();
+			}
+		}
+	}
+	
+	/**
+	 * Allow the given guest to change the number of nights reserved.
+	 * Takes in the new number of nights to reserve from user and check if those new dates are available :
+	 *  - if available : the new dates of the reservation is updated
+	 *  - else : print error message
+	 *  
+	 *  @param g - Guest : the guest editing 
+	 */
+	public void changeNbNights(Guest g) {
+    	System.out.println("Enter the new number of nights : ");
+    	int newNbNights = myObj.nextInt();
+    	
+    	Date checkIn = g.getChekDates()[0];
+    	
+    	Calendar c = Calendar.getInstance();
+    	c.setTime(checkIn);
+    	c.add(Calendar.DATE, newNbNights);
+    	Date nCheckOut = c.getTime();
+    	
+    	Date[] newDates = new Date[2];
+    	newDates[0] = checkIn;
+    	newDates[1] = nCheckOut;
+    	
+    	boolean available = g.getBooking().isAvailable(newDates);
+    	
+    	if(available==true) {
+    		g.getBooking().addReservation(newDates);
+    		g.getBooking().cancelReservation(g.getChekDates());
+    		g.setDates(newDates);	
+    	}
+    	else {
+    		System.out.println("Those dates or currently not available to be reserve. ");
+    	}
+	}
+	
+	/**
+	 * Allow the given guest to cancel a reservation.
+	 * 
+	 *  @param g - Guest : the guest canceling reservation
+	 */
+	public void cancel(Guest g) {
+		System.out.println("The reservation number " + g.getConfirmNb() + " has been cancelled.");
+		g.getBooking().cancelReservation(g.getChekDates());
+		Guest newG = (Guest) g.getBooking().getFirstObserver();
+		if (newG != null) {
+			newG.setConfirmNb();
+			newG.setDeposit(g.getBooking());
+			newG.getBooking().removeObserver(g);
+			
+			newG.display();
+			}
+		}
+	
+	/**
+	 * Creates all the available properties and add them to a list.
+	 */
+	public void createProperties() {
+		Bungallow a = new Bungallow("Morning Glory", 140);
+	    Bungallow b = new Bungallow("The Shelly", 110);
+	    Bungallow c = new Bungallow("Dream Cove", 160);
+	    Bungallow d = new Bungallow("Pacific Pleasure", 130);
+	    Bungallow e = new Bungallow("Sunset Paradise", 140);
+	    
+	    Cottage f = new Cottage("Perlita de Oro", 265);
+	    Cottage g = new Cottage("The Mermaid", 250);
+	    Cottage h = new Cottage("Poseidon's Lair", 350);
+	    
+	    allBungalows.add(a);
+	    allBungalows.add(b);
+	    allBungalows.add(c);
+	    allBungalows.add(d);
+	    allBungalows.add(e);
+	    
+	    allCottages.add(f);
+	    allCottages.add(g);
+	    allCottages.add(h);
+	}
+	
+	/**
+	 * Display the available properties of a given type.
+	 * 
+	 *  @param allBookings - the list of all properties
+	 */
+	public void display(ArrayList<Booking> allBookings) {
+		for(int i = 0; i < allBookings.size(); i++) {
+			allBookings.get(i).display();
+		}
+	}
+	
+	/**
+	 * The program's entry point.
+	 * 
+	 * @param args - an array of command-line arguments for the application
+	 */
+	public static void main(String[] args) {
+		new Exec();
+	}
+
+}
+

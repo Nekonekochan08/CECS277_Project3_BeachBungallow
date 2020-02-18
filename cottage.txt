@@ -1,0 +1,32 @@
+package Observer;
+/**
+ * Concrete class of the abstract Booking class (observer-pattern)
+ * 
+ * @author Tea Laurey
+ * @since 2019-10-27
+ * @version 1.0.0
+ */
+public class Cottage extends Booking{
+	
+	/**
+	 * Default constructor of a Cottage object. Takes in the cottage name and price and sets 
+	 * everything else (type, extra, deposit and refund).
+	 * @param name - name of the cottage
+	 * @param price - price per night
+	 */
+	public Cottage(String name, int price) {
+		this.setName(name);
+		this.setPrice(price);
+		this.setType(2);
+		this.setExtra(5);
+		this.setDeposit(0.5);
+		this.setRefund(0);
+	}
+	
+	/**
+	 * Display format of the cottage.
+	 */
+	public void display() {
+		System.out.println(this.getName() + " : $" + this.getPrice() + " per night.");
+	}
+}

@@ -1,0 +1,32 @@
+package Observer;
+/**
+ * Concrete class of the abstract Booking class (observer-pattern)
+ * 
+ * @author Tea Laurey
+ * @since 2019-10-27
+ * @version 1.0.0
+ */
+public class Bungallow extends Booking{
+	
+	/**
+	 * Default constructor of a Bungalow object. Takes in the bungalow name and price and sets 
+	 * everything else (type, extra, deposit and refund).
+	 * @param name - name of the bungalow
+	 * @param price - price per night of the bungalow
+	 */
+	public Bungallow(String name, int price){
+		this.setName(name);
+		this.setPrice(price);
+		this.setType(1);
+		this.setExtra(20);
+		this.setDeposit(0.2);
+		this.setRefund(this.getDeposit()*this.getPrice());
+	}
+	
+	/**
+	 * Display format of the bungalow.
+	 */
+	public void display() {
+		System.out.println(this.getName() + " : $" + this.getPrice() + " per night.");
+	}
+}

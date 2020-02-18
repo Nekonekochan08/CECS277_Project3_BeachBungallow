@@ -1,0 +1,29 @@
+package Observer;
+
+/**
+ * Implement the Observer Pattern
+ */
+public interface Observable {
+
+	/**
+	 * Add a given observer to the list of observers for updates.
+	 * 
+	 * @param observer - the observer to register
+	 */
+	public void registerObserver(Observer observer);
+	
+	/**
+	 * Send updates to observer.
+	 * 
+	 * @return observer - new reservation
+	 */
+	public Observer notifyObservers();
+	
+	/**
+	 * Remove a given observer from the list of observers.
+	 * 
+	 * @param observer - the observer to remove
+	 */
+	public void removeObserver(Observer observer);
+	
+}

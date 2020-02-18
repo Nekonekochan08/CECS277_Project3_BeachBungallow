@@ -1,0 +1,297 @@
+package Observer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Date;
+
+/**
+ * Abstract class implementing the Observable interface allowing it to manipulate observer objects.
+ * Abstract constructor consist of a list of observers to update.
+ * 
+ * @author Tea Laurey
+ * @since 2019-10-27
+ * @version 1.0.0
+ */
+public abstract class Booking implements Observable{
+	
+	/**
+	 * List of the observers to update.
+	 */
+	private List<Observer> observers;
+	private String name;
+	private int price;
+	private int extra;
+	private double deposit;
+	private double refund;
+	private Date[][] date;
+	private int counter;
+	private int type;
+	
+	/**
+	 * Default constructor of a Booking (a property)
+	 * Consist of a list of observers.
+	 */
+	public Booking(){
+		observers = new ArrayList<Observer>();
+		date = new Date[100][2];
+		counter = 0;
+	}
+	
+	/**
+	 * Get the name of a property.
+	 * @return name
+	 */
+	public String getName(){
+		return name;
+	}
+	
+	/**
+	 * Get the price of a property.
+	 * @return price
+	 */
+	public int getPrice() {
+		return price;
+	}
+	
+	/**
+	 * Get the extra of a property.
+	 * @return extra
+	 */
+	public int getExtra() {
+		return extra;
+	}
+	
+	/**
+	 * Get the deposit of a property.
+	 * @return deposit
+	 */
+	public double getDeposit() {
+		return deposit;
+	}
+	
+	/**
+	 * Get the refund of a property.
+	 * @return refund
+	 */
+	public double getRefund() {
+		return refund;
+	}
+	
+	/**
+	 * Get the date of a property.
+	 * @return date
+	 */
+	public Date[][] getDate(){
+		return date;
+	}
+	
+	/**
+	 * Get the type of a property.
+	 * @return type
+	 */
+	public int getType() {
+		return type;
+	}
+	
+	/**
+	 * Set the date of a property and notify observers of a change of date
+	 * @param newDate - new date value
+	 */
+	public void setDate(Date[][] newDate){
+		this.date = newDate;
+	}
+	
+	/**
+	 * Set the name of a property
+	 * @param nName - new name value
+	 */
+	public void setName(String nName){
+		this.name = nName;
+	}
+	
+	/**
+	 * Set the price of a property
+	 * @param newPrice - new price value
+	 */
+	public void setPrice(int newPrice){
+		this.price = newPrice;
+	}
+	
+	/**
+	 * Set the extra of a property
+	 * @param newExtra - new extra value
+	 */
+	public void setExtra(int newExtra){
+		this.extra = newExtra;
+	}
+
+	/**
+	 * Set the deposit of a property
+	 * @param newDeposit - new deposit value
+	 */
+	public void setDeposit(double newDeposit){
+		this.deposit = newDeposit;
+	}
+	
+	/**
+	 * Set the refund of a property
+	 * @param newRefund - new refund value
+	 */
+	public void setRefund(double newRefund){
+		this.refund = newRefund;
+	}
+	
+	/**
+	 * Set the type of a property
+	 * @param newType - new type value
+	 */
+	public void setType(int newType){
+		this.type = newType;
+	}
+	
+	/**
+	 * Add a new reservation to a property as dates.
+	 * @param newReservationDates - new dates 
+	 */
+	public void addReservation(Date[] newReservationDates) {
+		date[counter][0] = newReservationDates[0];
+		date[counter][1] = newReservationDates[1];
+		counter++;
+	}
+	
+	/**
+	 * Check if given dates are available.
+	 * @param newReservationDates - new dates
+	 * @return true - if dates available / false - otherwise
+	 */
+	public boolean isAvailable(Date[] newReservationDates) {
+		boolean checkIn = true; //0
+		boolean checkOut = true; //1
+		
+		for (int i = 0; i < counter; i++) {
+			//if	new reservation	is before a check out	AND			after a check in	=> UNAVAILABLE!!!!!!
+			if((newReservationDates[0].before(date[i][1])) && (newReservationDates[0].after(date[i][0]))) {
+				checkIn = false;
+			}
+			if((newReservationDates[1].before(date[i][1])) && (newReservationDates[1].after(date[i][0]))) {
+				checkOut = false;
+			}
+			
+			//if dates are the same
+			if(newReservationDates[0].equals(date[i][1])) {
+				checkIn = false;
+			}
+			if(newReservationDates[1].equals(date[i][1])) {
+				checkOut = false;
+			}
+			if(newReservationDates[0].equals(date[i][0])) {
+				checkIn = false;
+			}
+			if(newReservationDates[1].equals(date[i][0])) {
+				checkOut = false;
+			}
+			
+		}
+		if(!checkIn || !checkOut) {
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Display a property and its price to user.
+	 */
+	public void display() {
+		System.out.println(this.getName() + " is priced at $" + this.getPrice() + "per night.");
+	}
+
+	/**
+	 * Cancel a reservation by deleting it from the date list of the property.
+	 * @param checkDates - dates to delete
+	 */
+	public void cancelReservation(Date[] checkDates) {
+		for(int i = 0; i < counter; i++) {
+			if((date[i][0] == checkDates[0])&&(date[i][1] == checkDates[1])) {
+				removing(i);
+				counter--;
+                break;
+			}
+		}
+	}
+	
+	/**
+	 * Remove the date located at given index of the date list.
+	 * @param index - location of date to remove
+	 */
+	public void removing(int index) {
+		List<Date[]> stockout = new ArrayList<Date[]>(Arrays.asList(date));
+
+        for (int i = date.length-1; i >= 0; i--) {
+            for (int j = 0; j < counter; j++) {
+                if (i == index) {
+                    stockout.remove(i);
+                }
+            }
+        }
+        Date[][] newDates = (Date[][]) stockout.toArray(new Date[][] {});
+        this.setDate(newDates);
+    }
+	
+	/**
+	 * Returns the first observer contained in the list of observers.
+	 * @return obs - first observer of the list
+	 */
+	public Observer getFirstObserver() {
+		Observer obs = null;
+		if(observers.size() > 0) {
+			obs = observers.get(0);
+			observers.remove(0);
+		}
+		return obs;
+	}
+	
+	/**
+	 * Add observer to observer list of a property.
+	 * @param observer - observer to add
+	 */
+	@Override
+	public void registerObserver(Observer observer) {
+		if(observer != null){
+			this.observers.add(observer);
+		}
+	}
+
+	/**
+	 * Notify observer in observers' list that a property is available. Ask each observer if wants to book property or not,
+	 * stop if a guest says yes.
+	 */
+	@Override
+	public Observer notifyObservers() {
+		
+		Observer reserved = null;
+		int iterate = 0;
+		
+		if (observers.size() != 0) {
+			Observer observer = observers.get(iterate);
+			if(observer.update(this) == true) {
+				this.removeObserver(observer);
+				return observer;
+			}
+		}
+		
+		return reserved;
+	}
+
+	/**
+	 * Remove given observer from the observer's list.
+	 * @param observer - observer to remove
+	 */
+	@Override
+	public void removeObserver(Observer observer) {
+		if(observer != null){
+			this.observers.remove(observer);
+		}
+	}
+	
+	
+}

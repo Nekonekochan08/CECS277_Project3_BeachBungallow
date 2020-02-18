@@ -1,0 +1,355 @@
+package Observer;
+import java.util.Date;
+import java.util.Random;
+import java.util.Scanner;
+
+/**
+ * Creates the guests of the reservation for the booking platform.
+ * The guest informations consist of the user's : name, address, phone number, email, credit card info,
+ * checks dates, number of nights reserved, confirmation number, upgrade, deposit and wanted property.
+ * 
+ * This class implements the Observer interface.
+ * 
+ * @author Tea Laurey
+ * @since 2019-10-27
+ * @version 1.0.0
+ */
+public class Guest implements Observer {
+	Scanner myObj = new Scanner(System.in);  // Create a Scanner object
+	
+	private String name;
+	private String address;
+	private String phone;
+	private String email;
+	private String[] creditcard;
+	private Date[] checkinAndOut;
+	private int nbNights;
+	private int confirmationNb;
+	private int upgrade;
+	private double deposit;
+	private Booking b;
+	
+	/**
+	 * Empty constructor of Guest objects
+	 */
+	public Guest() {
+		
+	}
+	
+	/**
+	 * Get the name of a guest.
+	 * @return name - name of the user
+	 */
+	public String getName(){
+		return name;
+	}
+	
+	/**
+	 * Get the address of a guest.
+	 * @return address - address of the user
+	 */
+	public String getAddress(){
+		return address;
+	}
+	
+	/**
+	 * Get the phone# of a guest.
+	 * @return phone# - phone# of the user
+	 */
+	public String getPhone(){
+		return phone;
+	}
+	
+	/**
+	 * Get the email of a guest.
+	 * @return email - email of the user
+	 */
+	public String getEmail(){
+		return email;
+	}
+	
+	/**
+	 * Get the credit card info of a guest.
+	 * @return creditcard - credit card info of the user
+	 */
+	public String[] getCreditCard(){
+		return creditcard;
+	}
+	
+	/**
+	 * Get the check dates of a guest.
+	 * @return checkinAndOut - check dates of the user
+	 */
+	public Date[] getChekDates(){
+		return checkinAndOut;
+	}
+	
+	/**
+	 * Get the # nights reserved of a guest.
+	 * @return nbNights - # nights reserved of the user
+	 */
+	public int getnbNights() {
+		return nbNights;
+	}
+	
+	/**
+	 * Get the confirmation # of a guest.
+	 * @return confirmationNb - confirmation # of the user
+	 */
+	public int getConfirmNb() {
+		return confirmationNb;
+	}
+
+	/**
+	 * Get the upgrades of a guest.
+	 * @return upgrade - upgrade of the user
+	 */
+	public int getUpgrade() {
+		return upgrade;
+	}
+	
+	/**
+	 * Get the deposit of a guest.
+	 * @return deposit - deposit of the user
+	 */
+	public double getDeposit() {
+		return deposit;
+	}
+	
+	/**
+	 * Get the property wanted by a guest.
+	 * @return b - property reserved
+	 */
+	public Booking getBooking() {
+		return b;
+	}
+	
+	/**
+	 * Set the name of the user to a given name.
+	 * @param nName - updated name
+	 */
+	public void setName(String nName){
+		this.name = nName;
+	}
+	
+	/**
+	 * Ask user for new user name and update it.
+	 */
+	public void setName(){
+		System.out.println("Enter your full name : ");
+		String nName = myObj.nextLine();
+		this.name = nName;
+	}
+	
+	/**
+	 * Set the address of the user to a given address.
+	 * @param newAdd - updated address
+	 */
+	public void setAddress(String newAdd){
+		this.address = newAdd;
+	}
+	
+	/**
+	 * Ask user for new address and update it.
+	 */
+	public void setAddress(){
+		System.out.println("Enter your home address : ");
+		String nAdd = myObj.nextLine();
+		this.address = nAdd;
+	}
+	
+	/**
+	 * Set the phone # of the user to a given address.
+	 * @param nPhone - updated phone #
+	 */
+	public void setPhone(String nPhone){
+		this.phone = nPhone;
+	}
+	
+	/**
+	 * Ask user for new phone # and update it.
+	 */
+	public void setPhone(){
+		System.out.println("Enter your phone : ");
+		String nPhone = myObj.nextLine();
+		this.phone = nPhone;
+	}
+	
+	/**
+	 * Set the email of the user to a given address.
+	 * @param nEmail - updated email
+	 */
+	public void setEmail(String nEmail){
+		this.email = nEmail;
+	}
+	
+	/**
+	 * Ask user for new email and update it.
+	 */
+	public void setEmail(){
+		System.out.println("Enter your email address : ");
+		String nEmail = myObj.nextLine();
+		this.email = nEmail;
+	}
+	
+	/**
+	 * Set the credit card of the user to a given address.
+	 * @param nCard - updated card info
+	 */
+	public void setCreditCard(String[] nCard){
+		this.creditcard = nCard;
+	}
+	
+	/**
+	 * Ask user for new credit card info and update it.
+	 */
+	public void setCreditCard(){
+		String[] creditcard = new String[4];
+		
+		System.out.println("Payment Information :");
+		System.out.println("Enter name on card : ");
+		String cardName = myObj.nextLine();
+		creditcard[0] = cardName;
+		
+		System.out.println("Enter card number: ");
+		String cardNb = myObj.nextLine();
+		creditcard[1] = cardNb;
+		
+		System.out.println("Enter exp date : ");
+		String expDate = myObj.nextLine();
+		creditcard[2] = expDate;
+		
+		System.out.println("Enter security code : ");
+		String sCode = myObj.nextLine();
+		creditcard[3] = sCode;
+		
+		this.creditcard = creditcard;
+	}
+	
+	/**
+	 * Set the dates of the user to a given address.
+	 * @param nDates - updated dates
+	 */
+	public void setDates(Date[] nDates){
+		this.checkinAndOut = nDates;
+	}
+	
+	/**
+	 * Set the # of nights reserved to a given number.
+	 * @param nNbNights - new number of nights reserved
+	 */
+	public void setNbNights(int nNbNights){
+		this.nbNights = nNbNights;
+	}
+	
+	/**
+	 * Generates a confirmation number randomly.
+	 */
+	public void setConfirmNb() {
+		Random rand = new Random();
+		int newConNb = rand.nextInt(1000);
+		
+		confirmationNb = newConNb;
+	}
+	
+	/**
+	 * Sets the upgrades made by a user to given one.
+	 * 
+	 * @param r - booking reserved
+	 * @param nbUpNights - nights upgraded
+	 */
+	public void setUpgrade(Booking r, int nbUpNights) {
+		int Up = r.getExtra()*nbUpNights;
+		upgrade = Up;
+	}
+	
+	/**
+	 * Ask user for upgrades wanted according to the property type and update it.
+	 * 
+	 * @param type - reserved property type
+	 */
+	public void setUpgrade(int type) {
+		if(type == 1) {
+			System.out.println("Do you want to add a portable AC rental for $20 / night ? (y or n)");
+		}
+		else if (type == 2) {
+			System.out.println("Do you want to add cable TV access for $5 / night ? (y or n)");	
+		}
+		
+		String answer = myObj.next();
+		if(answer.compareTo("y") == 0) {
+			System.out.println("Enter number of nights upgraded : ");
+			int nbNightUp = myObj.nextInt();
+			this.setUpgrade(b, nbNightUp);
+		}
+		else if (answer == "n") {
+			this.upgrade = 0;
+		}
+	}
+	
+	/**
+	 * Sets the deposit of a guest according to the property reserved.
+	 * 
+	 * @param r - reserved property
+	 */
+	public void setDeposit(Booking r) {
+		double dep = r.getDeposit();
+		int price = r.getPrice();
+		int totalPrice = price*nbNights + upgrade;
+		
+		deposit = totalPrice*dep;
+	}
+	
+	/**
+	 * Sets the property reserved to given one.
+	 * 
+	 * @param r - property reserved
+	 */
+	public void setBooking(Booking r) {
+		b = r;
+	}
+	
+	/**
+	 * Display the card info contained in an array to the user.
+	 * @param nCard - an array of the card informations as strings
+	 */
+	public void displayCardInfo(String[] nCard) {
+		System.out.println("Name on card : " + nCard[0]);
+		System.out.println("Card Number : " + nCard[1]);
+		System.out.println("Exp. Date : " + nCard[2]);
+		System.out.println("Security Code : " + nCard[3]);
+
+	}
+	
+	/**
+	 * Display all the info of the guest.
+	 */
+	public void display() {
+		System.out.println("Name : " + name);
+		System.out.println("Address : " + address);
+		System.out.println("Phone # : " + phone);
+		System.out.println("Email : " + email);
+		System.out.println("Credit card info : ");
+		displayCardInfo(creditcard);
+		System.out.println("\nCheck in date : " + checkinAndOut[0]);
+		System.out.println("Number of nights reserved : " + nbNights);
+		System.out.println("Deposit charged : $" + deposit);
+		System.out.println("\nConfirmation Number : " + confirmationNb);
+	}
+	
+	/**
+	 * Ask the guest if he/she wants to reserve a property that she/he got wait-listed on.
+	 * 
+	 * @return true - if guest wants to reserve property / false - otherwise
+	 */
+	@Override
+	public boolean update(Booking booking) {
+		System.out.println("Notification for the Guest " + this.name + ": The " + booking.getName() +" is now available for reservations for : $" + booking.getPrice() + " per nights!");
+		System.out.println("Do you want to book it ? (y or n)");
+		String response = myObj.next();
+		if (response.compareTo("y") == 0) {
+			return true;
+		}
+		return false;
+	}
+}

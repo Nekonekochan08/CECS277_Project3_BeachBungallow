@@ -1,0 +1,16 @@
+package Observer;
+/**
+ * Implement the Observer Pattern
+ */
+public interface Observer {
+
+	/**
+	 * Get updates for a given booking.
+	 * Returns true if the observer is interested in booking a property.
+	 * Returns false otherwise.
+	 * 
+	 * @param booking - the wanted booking update
+	 * @return true - if guest wants to reserve property / false - otherwise
+	 */
+	public boolean update(Booking booking);
+}
